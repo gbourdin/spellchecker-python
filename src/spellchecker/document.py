@@ -8,14 +8,17 @@ WRITE_MODE = 'w+'
 
 
 class Document(object):
-    def __init__(self):
-        self.document = None
-        self.mode = None
-
-    def open(self, filename, mode):
+    """
+    A class representing a document.
+    It's a glorified file handler with a
+    custom method to get a word while writing all the non-alphabetic characters
+    to another document and a wrapper around write to write strings to
+    the selected file.
+    """
+    def __init__(self, filename, mode=READ_MODE):
         """
-        Opens the document that will be contained by this object.
-        Use READ_MODE if you only want to read, WRITE_MODE if you want
+        Creates a new document object pointing to filename.
+        Set mode to READ_MODE if you only want to read, WRITE_MODE if you want
         to create a new file and write to it.
         """
         self.document = open(filename, mode)
@@ -62,11 +65,7 @@ class Document(object):
         :param word: A string of characters that should be written to the file
         :return: Number of characters writen
         """
-        if not self.document:
-            raise IOError('Document was not open')
-
         return self.document.write(word)
 
     def close(self):
-        if self.document:
-            self.document.close()
+        self.document.close()
