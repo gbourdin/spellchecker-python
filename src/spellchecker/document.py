@@ -41,12 +41,12 @@ class Document(object):
         next_char = self.document.read(1)
         while next_char and (not next_char.isalpha()):
             trash_buffer.append(next_char)
-            next_char.read(1)
+            next_char = self.document.read(1)
 
         # I'm out of the previous loop, word might be over
         while next_char and (next_char.isalpha()):
             word_buffer.append(next_char)
-            next_char.read(1)
+            next_char = self.document.read(1)
 
         if next_char:  # If document is not over "put it back in the buffer"
             self.document.seek(self.document.tell() - 1)  # Go back 1 character
