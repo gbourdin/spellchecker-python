@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 import sys
 
 from .dictionary import Dictionary
-from .document import Document
+from .document import Document, READ_MODE, WRITE_MODE
 
 
 def main():
