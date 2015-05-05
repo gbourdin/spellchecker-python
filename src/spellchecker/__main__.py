@@ -12,12 +12,16 @@ except NameError:
     pass
 
 
+DEFAULT_MAIN_DICT_NAME = 'dict.txt'
+DEFAULT_OUTPUT_DOC_NAME = 'out.txt'
+
+
 def consult_user(word, known_words, ignored_words):
     ans = input("Palabra no reconocida: {0}\n".format(word) +
                 "Aceptar (a) - Ignorar (i) - Reemplazar (r): ")
 
     if ans.startswith('a'):
-        known_words.add('a')
+        known_words.add(word)
         return word
     elif ans.startswith('i'):
         ignored_words.add(word)
@@ -31,9 +35,9 @@ def consult_user(word, known_words, ignored_words):
         return consult_user(word, known_words, ignored_words)
 
 
-def process_document(filename, known_words, ignored_words):
-    doc_in = Document(filename, mode=READ_MODE)
-    doc_out = Document('out.txt', mode=WRITE_MODE)
+def process_document(in_filename, out_filename, known_words, ignored_words):
+    doc_in = Document(in_filename, mode=READ_MODE)
+    doc_out = Document(out_filename, mode=WRITE_MODE)
 
     word = doc_in.get_word(doc_out)
 
@@ -53,10 +57,33 @@ def process_document(filename, known_words, ignored_words):
 
 
 def main():
-    doc_in_filename = ''
-    print("Oh noes, I'm not implemented yet!")
-    print("El documento %s ha sido procesado. Resultados en out.txt".format(
-        doc_in_filename))
+
+    parser = ArgumentParser(prog='spellchecker')
+
+    parser.add_argument("documento", help="Documento de entrada")
+    parser.add_argument("diccionario", nargs='?',
+                        help="Diccionario de entrada/salida")
+
+    args = parser.parse_args()
+    doc_in_filename = args.documento
+    known_words_filename = args.diccionario
+
+    known_words = Dictionary()
+    ignored_words = Dictionary()
+
+    if known_words_filename:
+        known_words.load(known_words_filename)
+    else:
+        known_words_filename = DEFAULT_MAIN_DICT_NAME
+
+    process_document(
+        doc_in_filename, DEFAULT_OUTPUT_DOC_NAME, known_words, ignored_words
+    )
+
+    known_words.save(known_words_filename)
+
+    print('El documento {0} ha sido procesado. '.format(doc_in_filename) +
+          'Resultados en out.txt')
 
 if __name__ == "__main__":
     sys.exit(main())
