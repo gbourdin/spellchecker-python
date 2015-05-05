@@ -1,7 +1,7 @@
 ===================
 spellchecker-python
 ===================
-No es realmente un spellchecker, es la implementación en python, por nerdear un poco unicamente,
+No es realmente un spellchecker, es la implementación en python, por nerdear un poco únicamente,
 de un trabajo del laboratorio de la materia Paradigmas de la Programación, de FaMAF.
 
 
