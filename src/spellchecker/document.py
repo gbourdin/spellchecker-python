@@ -23,6 +23,10 @@ class Document(object):
         """
         self.document = open(filename, mode)
         self.mode = mode
+        if self.mode == READ_MODE:  # deque of chars from the document
+            self.doc_buffer = deque(self.document.read())
+        else:
+            self.doc_buffer = deque()
 
     def get_word(self, doc_out):  # Would be awesome if this was an iterator
         """
@@ -38,18 +42,12 @@ class Document(object):
         trash_buffer = deque()
         word_buffer = deque()
 
-        next_char = self.document.read(1)
-        while next_char and (not next_char.isalpha()):
-            trash_buffer.append(next_char)
-            next_char = self.document.read(1)
+        while len(self.doc_buffer) and (not self.doc_buffer[0].isalpha()):
+            trash_buffer.append(self.doc_buffer.popleft())
 
-        # I'm out of the previous loop, word might be over
-        while next_char and (next_char.isalpha()):
-            word_buffer.append(next_char)
-            next_char = self.document.read(1)
-
-        if next_char:  # If document is not over "put it back in the buffer"
-            self.document.seek(self.document.tell() - 1)  # Go back 1 character
+        # I'm out of the previous loop, buffer might be empty
+        while len(self.doc_buffer) and (self.doc_buffer[0].isalpha()):
+            word_buffer.append(self.doc_buffer.popleft())
 
         # Write trash to doc_out before returning!
         doc_out.put_word(''.join(trash_buffer))
@@ -65,7 +63,9 @@ class Document(object):
         :param word: A string of characters that should be written to the file
         :return: Number of characters writen
         """
-        return self.document.write(word)
+        return self.doc_buffer.append(word)
 
     def close(self):
+        if self.mode == WRITE_MODE:
+            self.document.write(''.join(self.doc_buffer))
         self.document.close()
